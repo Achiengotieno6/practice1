@@ -12,7 +12,7 @@ int main(int argc, char **argv)
 		{
 			exit(EXIT_SUCCESS);
 		}
-		if (command[0] == '\0' || _strcmp(command, '\n') == 0)
+		if (command[0] == '\0' || _strcmp(command, "\n") == 0)
 		{
 			free(command);
 			continue;
@@ -22,7 +22,8 @@ int main(int argc, char **argv)
 			free(command);
 			break;
 		}
-		write(STDOUT_FILENO, command, _strlen(command));
+		write(1, command, 1024);
+		write(1, "\n", 1);
 		free(command);
 	}
 	while (1);
@@ -30,45 +31,49 @@ int main(int argc, char **argv)
 }
 void print_prompt(void)
 {
-	char prompt[] = "$";
-	write(STDERR_FILENO, prompt, sizeof(prompt) -1);
+	write(2, "$ ", 2);
 }
 char *read_command(void)
 {
 	char buf[1024];
-	char *ptr = NULL;
-	char ptrlen = 0;
-	size_t buflen;
-	char *ptr2;
+       	char *ptr = NULL;
+	char ptrlen =0; 
+	char *temp;
+	int buflen = _strlen(buf);
+	size_t bufadd = buflen;
 
-	while (getline(&buf, &(size_t){1024}, stdin) != -1)
-	{
-		buflen = _strlen(buf);
+	while (getline(&ptr, &bufadd, stdin))
+	{	
 		if (!ptr)
-		{
 			ptr = malloc(buflen + 1);
-		}
 		else
 		{
-			ptr2 = realloc(ptr, ptrlen + buflen + 1);
-			if(ptr2)
+			temp = malloc(ptrlen + buflen + 1);
+			if(temp)
 			{
-				ptr =ptr2;
+				_strncpy(temp, ptr, ptrlen);
+				free(ptr);
+				ptr = temp;
 			}
 			else
 			{
 				free(ptr);
-				ptr = NULL;
+				perror("allocatopn failed");
+				return (NULL);
 			}
 		}
-		if(!ptr)
+		if (!ptr)
 		{
 			perror("allocation failed");
 			return (NULL);
 		}
-		_strncpy(ptr + ptrlen, buf);
+		_strncpy(ptr + ptrlen, buf, buflen);
+		if (buf[buflen - 1] == '\n')
+		{
+			if(buflen == 1 || buf[buflen-2] != '\\')
+				return (ptr);
+		}
 		ptrlen += buflen;
 	}
 	return (ptr);
-
 }

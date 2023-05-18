@@ -13,5 +13,5 @@ int _strlen(char *s);
 /* main functions */
 void print_prompt(void);
 char *read_command(void);
-char *_strncpy(char *dest, char *src);
+char *_strncpy(char *dest, char *src, int n);
 #endif
