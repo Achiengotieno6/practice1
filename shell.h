@@ -11,7 +11,8 @@
 int _strcmp(char *s1, char *s2);
 int _strlen(char *s);
 /* main functions */
-void print_prompt(void);
+void print_prompt1(void);
+void print_prompt2(void);
 char *read_command(void);
 char *_strncpy(char *dest, char *src, int n);
 #endif
